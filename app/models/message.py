@@ -21,6 +21,6 @@ class MessageModel(Document):
                 "chat_id": "chat_456",
                 "content": "Hello World!",
                 "timestamp": "2025-05-29T15:45:00Z",
-                "is_read": False
+                "is_read": False,
             }
         }
