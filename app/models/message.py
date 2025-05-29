@@ -1,8 +1,8 @@
-from uuid import UUID, uuid4
 from datetime import datetime
+from uuid import UUID, uuid4
 
-from pydantic import Field
 from beanie import Document
+
 
 class MessageModel(Document):
     sender_id: str

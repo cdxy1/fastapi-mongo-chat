@@ -1,7 +1,4 @@
-from beanie import Document, Indexed
-from datetime import datetime
-from pydantic import Field
-from typing import List, Optional
+from beanie import Document
 
 
 class ChatRoomModel(Document):
