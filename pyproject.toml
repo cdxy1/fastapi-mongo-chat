@@ -1,0 +1,19 @@
+[project]
+name = "hope-i-will-finish-thos"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "celery>=5.5.2",
+    "fastapi>=0.115.12",
+    "pika>=1.3.2",
+    "pymongo>=4.13.0",
+    "uvicorn>=0.34.2",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3.5",
+    "ruff>=0.11.11",
+]
