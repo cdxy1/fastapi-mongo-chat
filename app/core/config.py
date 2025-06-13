@@ -4,7 +4,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class DatabaseModelConfig(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file="./.env", env_file_encoding="utf-8", extra="ignore"
+        env_file="./.env.example", env_file_encoding="utf-8", extra="ignore"
     )
     DATABASE_USER: str
     DATABASE_PASSWORD: str
@@ -23,4 +23,4 @@ class MongoConfig(DatabaseModelConfig):
             host=self.DATABASE_HOST,
             port=self.DATABASE_PORT,
             path=self.DATABASE_NAME,
-        )
+        ).encoded_string()
