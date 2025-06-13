@@ -4,16 +4,17 @@ from fastapi import APIRouter, Depends, status
 from fastapi.exceptions import HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
+from pymongo.errors import DuplicateKeyError
 
-from app.dao.user_dao import UserDAO
-from app.infrastructure.redis_infra import redis_client
-from app.schemas.response import (
+from backend.dao.user_dao import UserDAO
+from backend.infrastructure.redis_infra import redis_client
+from backend.schemas.response import (
     AccessTokenResponseSchema,
     AuthResponseSchema,
     ResponseSchema,
 )
-from app.schemas.user import UserSchema
-from app.utils.auth import (
+from backend.schemas.user import UserSchema
+from backend.utils.auth import (
     create_access_token,
     create_refresh_token,
     decode_access_token,
@@ -28,17 +29,22 @@ router = APIRouter(tags=["Auth"])
 async def register(
     user: UserSchema,
 ) -> JSONResponse:
-    await UserDAO.create(user)
-    response = ResponseSchema(detail="Success")
-    return JSONResponse(
-        status_code=status.HTTP_201_CREATED, content=response.model_dump()
-    )
+    try:
+        await UserDAO.create(user)
+        response = ResponseSchema(detail="Success")
+        return JSONResponse(
+            status_code=status.HTTP_201_CREATED, content=response.model_dump()
+        )
+    except DuplicateKeyError:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT, detail="Duplicate error"
+        )
 
 
 @router.get("/get_users")
 async def get_users():
     users = await UserDAO().read_all()
-    return JSONResponse(status_code=status.HTTP_200_OK, content=users)
+    return users
 
 
 @router.post("/auth")

@@ -16,14 +16,14 @@ class RedisClient:
         self.redis_url = os.getenv("REDIS_URL")
         self.redis: Optional[Redis | None] = None
 
-    async def connect(self):
+    async def connect(self) -> None:
         self.redis = await aioredis.from_url(self.redis_url, decode_responses=True)
 
-    async def close(self):
+    async def close(self) -> None:
         if self.redis:
             await self.redis.close()
 
-    async def set_value(self, key: str, value: str, expire: timedelta):
+    async def set_value(self, key: str, value: str, expire: timedelta) -> None:
         try:
             await self.redis.setex(f"refresh:{key}", expire, value)
         except ConnectionError:
@@ -41,7 +41,7 @@ class RedisClient:
                 detail="Redis is not available.",
             )
 
-    async def delete_value(self, key):
+    async def delete_value(self, key) -> None:
         try:
             await self.redis.delete(f"refresh:{key}")
         except ConnectionError:

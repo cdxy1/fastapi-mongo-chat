@@ -22,5 +22,7 @@ class MongoConfig(DatabaseModelConfig):
             password=self.DATABASE_PASSWORD,
             host=self.DATABASE_HOST,
             port=self.DATABASE_PORT,
-            path=self.DATABASE_NAME,
         ).encoded_string()
+
+
+MONGO_DB = MongoConfig()

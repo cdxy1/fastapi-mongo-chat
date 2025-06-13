@@ -1,18 +1,18 @@
-from app.models.user import UserModel
-from app.schemas.user import UserSchema
-from app.utils.auth import hash_password
+from backend.models.user import UserModel
+from backend.schemas.user import UserSchema
+from backend.utils.auth import hash_password
 
 
 class UserDAO:
     @staticmethod
-    async def create(user: UserSchema):
+    async def create(user: UserSchema) -> UserModel:
         user.password = hash_password(user.password)
         new_user = UserModel(**user.model_dump())
         await new_user.insert()
         return new_user
 
     @staticmethod
-    async def find_by_name(username: str):
+    async def find_by_name(username: str) -> UserModel:
         user = await UserModel.find({"username": username}).first_or_none()
         return user
 

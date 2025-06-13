@@ -2,7 +2,7 @@ services:
   fastapi:
     build:
       context: .
-      dockerfile: ./app/Dockerfile
+      dockerfile: ./backend/Dockerfile
     container_name: chat
     env_file: ".env.example"
     ports:

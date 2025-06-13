@@ -1,11 +1,12 @@
 from beanie import init_beanie
 from motor.motor_asyncio import AsyncIOMotorClient
 
-from app.models.user import UserModel
+from backend.core.config import MONGO_DB
+from backend.models.user import UserModel
 
 
 class MongoDB:
-    _CLIENT = AsyncIOMotorClient("mongodb://admin:1234@mongo:27017/")
+    _CLIENT = AsyncIOMotorClient(MONGO_DB.DATABASE_URL)
 
     @classmethod
     async def init_db(cls):

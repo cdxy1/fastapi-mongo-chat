@@ -5,10 +5,10 @@ from typing import Annotated
 import jwt
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
-from jwt import DecodeError
+from jwt import DecodeError, ExpiredSignatureError
 from passlib.context import CryptContext
 
-from app.infrastructure.redis_infra import redis_client
+from backend.infrastructure.redis_infra import redis_client
 
 pwd_context = CryptContext(["bcrypt"])
 oauth2_schema = OAuth2PasswordBearer("/auth")
@@ -67,3 +67,5 @@ def user_id_from_token(token: Annotated[str, Depends(oauth2_schema)]) -> dict:
 
     except DecodeError:
         raise HTTPException(status_code=401, detail="Token decode error")
+    except ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Signature has expired")
