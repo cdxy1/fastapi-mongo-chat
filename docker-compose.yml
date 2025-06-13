@@ -1,13 +1,26 @@
-# Use root/example as user/password credentials
-
 services:
-
+  fastapi:
+    build:
+      context: .
+      dockerfile: ./app/Dockerfile
+    container_name: chat
+    env_file: ".env.example"
+    ports:
+      - 8000:8000
+    depends_on:
+      - mongo
+      - redis
+  
   mongo:
     image: mongo
     restart: always
+    volumes:
+      - chat_data:/var/lib/mongodb/data
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: 1234
+    ports:
+      - 27017:27017
 
   mongo-express:
     image: mongo-express
@@ -15,14 +28,17 @@ services:
     ports:
       - 8081:8081
     environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: root
-      ME_CONFIG_MONGODB_ADMINPASSWORD: example
-      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: 1234
+      ME_CONFIG_MONGODB_URL: 
       ME_CONFIG_BASICAUTH: false
-      
+
   redis:
     image: redis:alpine
     container_name: redis_fastapi
     ports:
       - "6379:6379"
     restart: unless-stopped
+
+volumes:
+  chat_data:
