@@ -1,4 +1,3 @@
-import os
 from datetime import datetime, timedelta
 from typing import Annotated
 
@@ -8,7 +7,8 @@ from fastapi.security import OAuth2PasswordBearer
 from jwt import DecodeError, ExpiredSignatureError
 from passlib.context import CryptContext
 
-from backend.infrastructure.redis_infra import redis_client
+from backend.infrastructure.redis import redis_client
+from backend.core.config import SECURITY
 
 pwd_context = CryptContext(["bcrypt"])
 oauth2_schema = OAuth2PasswordBearer("/auth")
@@ -28,7 +28,7 @@ def create_access_token(
     to_encode = data.copy()
     expire = datetime.now() + timedelta(minutes=30)
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, os.getenv("SECRET_KEY"), os.getenv("ALGORITHM"))
+    encoded_jwt = jwt.encode(to_encode, SECURITY.SECRET_KEY, SECURITY.ALGORITHM)
     return encoded_jwt
 
 
@@ -38,8 +38,8 @@ async def create_refresh_token(
     expire = timedelta(days=30)
     encoded_jwt = jwt.encode(
         {"sub": username},
-        os.getenv("SECRET_KEY"),
-        os.getenv("ALGORITHM"),
+        SECURITY.SECRET_KEY,
+        SECURITY.ALGORITHM,
     )
     await redis_client.set_value(username, encoded_jwt, expire)
     return encoded_jwt
@@ -47,7 +47,7 @@ async def create_refresh_token(
 
 def decode_access_token(token: Annotated[str, Depends(oauth2_schema)]) -> dict:
     try:
-        payload = jwt.decode(token, os.getenv("SECRET_KEY"), os.getenv("ALGORITHM"))
+        payload = jwt.decode(token, SECURITY.SECRET_KEY, SECURITY.ALGORITHM)
         exp = payload.get("exp")
 
         if not exp or datetime.now() >= datetime.utcfromtimestamp(exp):
@@ -60,7 +60,7 @@ def decode_access_token(token: Annotated[str, Depends(oauth2_schema)]) -> dict:
 
 def user_id_from_token(token: Annotated[str, Depends(oauth2_schema)]) -> dict:
     try:
-        payload = jwt.decode(token, os.getenv("SECRET_KEY"), os.getenv("ALGORITHM"))
+        payload = jwt.decode(token, SECURITY.SECRET_KEY, SECURITY.ALGORITHM)
         user = payload.get("sub")
 
         return user

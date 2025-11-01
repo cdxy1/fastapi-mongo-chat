@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from backend.api.v1.auth import router as auth_router
 from backend.api.v1.chat import router as chat_router
 from backend.infrastructure.database import MongoDB
-from backend.infrastructure.redis_infra import redis_client
+from backend.infrastructure.redis import redis_client
 
 
 @asynccontextmanager

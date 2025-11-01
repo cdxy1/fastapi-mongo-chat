@@ -7,7 +7,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from pymongo.errors import DuplicateKeyError
 
 from backend.dao.user_dao import UserDAO
-from backend.infrastructure.redis_infra import redis_client
+from backend.infrastructure.redis import redis_client
 from backend.schemas.response import (
     AccessTokenResponseSchema,
     AuthResponseSchema,
