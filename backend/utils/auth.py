@@ -7,8 +7,8 @@ from fastapi.security import OAuth2PasswordBearer
 from jwt import DecodeError, ExpiredSignatureError
 from passlib.context import CryptContext
 
-from backend.infrastructure.redis import redis_client
 from backend.core.config import SECURITY
+from backend.infrastructure.redis import redis_client
 
 pwd_context = CryptContext(["bcrypt"])
 oauth2_schema = OAuth2PasswordBearer("/auth")

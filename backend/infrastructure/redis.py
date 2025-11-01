@@ -1,4 +1,3 @@
-import os
 from datetime import timedelta
 from typing import Optional
 
@@ -8,6 +7,7 @@ from redis import asyncio as aioredis
 from starlette import status
 
 from backend.core.config import REDIS
+
 
 class RedisClient:
     def __init__(self):
