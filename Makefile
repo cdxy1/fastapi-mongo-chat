@@ -1,4 +1,4 @@
-.PHONY: up, down, up-dev, down-dev, run
+.PHONY: up, down, up-dev, down-dev, run, fmt
 
 run:
 	uvicorn backend.main:app --reload
@@ -14,3 +14,6 @@ up-dev:
 
 down-dev:
 	docker compose -f ./compose-local.yml -p dev down
+
+fmt:
+	ruff format; ruff check --fix
