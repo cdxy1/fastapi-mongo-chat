@@ -3,7 +3,7 @@ from backend.schemas.user import UserSchema
 from backend.utils.auth import hash_password
 
 
-class UserDAO:
+class UserRepo:
     @staticmethod
     async def create(user: UserSchema) -> UserModel:
         user.password = hash_password(user.password)

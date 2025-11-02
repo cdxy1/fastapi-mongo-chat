@@ -15,14 +15,3 @@ class MessageModel(Document):
 
     class Settings:
         name = "messages"
-
-    class Config:
-        schema_extra = {
-            "example": {
-                "sender_id": "user_123",
-                "chat_id": "chat_456",
-                "content": "Hello World!",
-                "timestamp": "2025-05-29T15:45:00Z",
-                "is_read": False,
-            }
-        }

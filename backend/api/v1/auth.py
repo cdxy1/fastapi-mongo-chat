@@ -6,8 +6,8 @@ from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from pymongo.errors import DuplicateKeyError
 
-from backend.dao.user_dao import UserDAO
 from backend.infrastructure.redis import redis_client
+from backend.repo.user import UserRepo
 from backend.schemas.response import (
     AccessTokenResponseSchema,
     AuthResponseSchema,
@@ -30,7 +30,7 @@ async def register(
     user: UserSchema,
 ) -> JSONResponse:
     try:
-        await UserDAO.create(user)
+        await UserRepo.create(user)
         response = ResponseSchema(detail="Success")
         return JSONResponse(
             status_code=status.HTTP_201_CREATED, content=response.model_dump()
@@ -49,7 +49,7 @@ async def login(
         status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized"
     )
 
-    user = await UserDAO.find_by_name(username=form_data.username)
+    user = await UserRepo.find_by_name(username=form_data.username)
     if user and verify_password(form_data.password, user.password):
         token = create_access_token({"sub": str(user.id)})
         refresh_token = await create_refresh_token(str(user.id))
