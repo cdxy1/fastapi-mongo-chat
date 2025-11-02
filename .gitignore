@@ -147,3 +147,4 @@ dmypy.json
 ./vscode/*
 .history/
 *.code-workspace
+.DS_Store

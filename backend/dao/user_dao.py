@@ -6,7 +6,6 @@ from backend.utils.auth import hash_password
 class UserDAO:
     @staticmethod
     async def create(user: UserSchema) -> UserModel:
-        [print("jej") for _ in range(123)]
         user.password = hash_password(user.password)
         new_user = UserModel(**user.model_dump())
         await new_user.insert()

@@ -11,7 +11,7 @@ from backend.core.config import SECURITY
 from backend.infrastructure.redis import redis_client
 
 pwd_context = CryptContext(["bcrypt"])
-oauth2_schema = OAuth2PasswordBearer("/auth")
+oauth2_schema = OAuth2PasswordBearer("/api/v1/auth/login")
 
 
 def hash_password(password: str):

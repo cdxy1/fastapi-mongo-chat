@@ -3,27 +3,24 @@ from fastapi import WebSocket
 
 class ConnectionManager:
     def __init__(self):
-        self.active_connections: dict[int, dict[int, WebSocket]] = {}
+        self.active_connections: dict[str, WebSocket] = {}
 
-    async def connect(self, websocket: WebSocket, room_id: int, user_id: int):
+    async def connect(self, websocket: WebSocket, user: str):
         await websocket.accept()
-        if room_id not in self.active_connections:
-            self.active_connections[room_id] = {}
-        self.active_connections[room_id][user_id] = websocket
+        if user not in self.active_connections:
+            self.active_connections[user] = websocket
 
-    def disconnect(self, room_id: int, user_id: int):
-        if (
-            room_id in self.active_connections
-            and user_id in self.active_connections[room_id]
-        ):
-            del self.active_connections[room_id][user_id]
-            if not self.active_connections[room_id]:
-                del self.active_connections[room_id]
+    def disconnect(self, user: str):
+        if user in self.active_connections:
+            del self.active_connections[user]
 
-    async def broadcast(self, message: str, room_id: int, sender_id: int):
-        if room_id in self.active_connections:
-            for user_id, connection in self.active_connections[room_id].items():
-                message_with_class = {"text": message, "is_self": user_id == sender_id}
+    async def broadcast(self, message: str, user: str):
+        if user in self.active_connections:
+            for user_id, connection in self.active_connections.items():
+                message_with_class = {
+                    "user": user_id,
+                    "text": message,
+                }
                 await connection.send_json(message_with_class)
 
 

@@ -22,7 +22,7 @@ from backend.utils.auth import (
     verify_password,
 )
 
-router = APIRouter(tags=["Auth"])
+router = APIRouter(prefix="/auth", tags=["Auth"])
 
 
 @router.post("/register")
@@ -47,7 +47,7 @@ async def get_users():
     return users
 
 
-@router.post("/auth")
+@router.post("/login")
 async def login(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ) -> JSONResponse:
