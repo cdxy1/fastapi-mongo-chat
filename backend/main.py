@@ -13,6 +13,7 @@ async def lifespan(app: FastAPI):
     await redis_client.connect()
     await MongoDB().init_db()
     yield
+    MongoDB.close()
     await redis_client.close()
 
 

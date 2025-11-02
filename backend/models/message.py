@@ -10,7 +10,7 @@ class MessageModel(Document):
     content: str
     sender: Link[UserModel]
     room: Link[ChatRoomModel]
-    timestamp: datetime = datetime.utcnow
+    timestamp: datetime = datetime.utcnow()
     is_read: bool = False
 
     class Settings:
