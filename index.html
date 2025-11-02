@@ -23,7 +23,16 @@
             };
             function sendMessage(event) {
                 var input = document.getElementById("messageText")
-                ws.send(input.value)
+
+                let msg = {
+                    "message": input.value,
+                    "type": "placeholder",
+                    "receiver": "placeholder",
+                }
+
+                let data = JSON.stringify(msg)
+
+                ws.send(data)
                 input.value = ''
                 event.preventDefault()
             }

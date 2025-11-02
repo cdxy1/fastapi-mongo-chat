@@ -1,8 +1,12 @@
-from beanie import Document
+from beanie import Document, Link
+
+from backend.models.message import MessageModel
+from backend.models.user import UserModel
 
 
 class ChatRoomModel(Document):
-    participants: list
+    participants: list[Link[UserModel]]
+    messages: list[Link[MessageModel]]
 
     class Settings:
         name = "chat_rooms"

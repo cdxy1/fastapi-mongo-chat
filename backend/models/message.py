@@ -1,11 +1,13 @@
 from datetime import datetime
 from uuid import UUID, uuid4
 
-from beanie import Document
+from beanie import Document, Link
+
+from backend.models.user import UserModel
 
 
 class MessageModel(Document):
-    sender_id: str
+    sender_id: Link[UserModel]
     chat_id: UUID = uuid4()
     content: str
     timestamp: datetime = datetime.utcnow

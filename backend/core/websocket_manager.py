@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from fastapi import WebSocket
 
 
@@ -15,13 +17,13 @@ class ConnectionManager:
             del self.active_connections[user]
 
     async def broadcast(self, message: str, user: str):
-        if user in self.active_connections:
-            for user_id, connection in self.active_connections.items():
-                message_with_class = {
-                    "user": user_id,
-                    "text": message,
-                }
-                await connection.send_json(message_with_class)
+        if conn := self.active_connections.get(user):
+            message_with_class = {
+                "time": str(datetime.now()),
+                "user": user,
+                "text": message,
+            }
+            await conn.send_json(message_with_class)
 
 
 websocket_manager = ConnectionManager()
