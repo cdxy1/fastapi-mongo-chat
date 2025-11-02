@@ -17,7 +17,7 @@ class UserDAO:
         return user
 
     @staticmethod
-    async def read_all() -> list["UserModel"]:
+    async def find_all() -> list["UserModel"]:
         users_cursor = UserModel.find_all()
         users = await users_cursor.to_list()
         return users

@@ -1,15 +1,15 @@
 from datetime import datetime
-from uuid import UUID, uuid4
 
 from beanie import Document, Link
 
+from backend.models.chat import ChatRoomModel
 from backend.models.user import UserModel
 
 
 class MessageModel(Document):
-    sender_id: Link[UserModel]
-    chat_id: UUID = uuid4()
     content: str
+    sender: Link[UserModel]
+    room: Link[ChatRoomModel]
     timestamp: datetime = datetime.utcnow
     is_read: bool = False
 
