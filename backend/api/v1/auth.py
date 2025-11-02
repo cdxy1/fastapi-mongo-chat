@@ -41,12 +41,6 @@ async def register(
         )
 
 
-@router.get("/get_users")
-async def get_users():
-    users = await UserDAO().read_all()
-    return users
-
-
 @router.post("/login")
 async def login(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
