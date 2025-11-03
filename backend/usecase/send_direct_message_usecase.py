@@ -5,7 +5,7 @@ from backend.service.room import RoomService
 from backend.service.user import UserService
 
 
-@dataclass()
+@dataclass
 class SendDirectMessageUsecase:
     async def __call__(self, sender: str, reciver, msg: str):
         sender = await UserService.get_user(sender)
@@ -16,6 +16,8 @@ class SendDirectMessageUsecase:
         else:
             room = await RoomService.get_p2p_room(sender, reciver)
 
-        msg = await MessageService.create_message(msg, sender, room)
+        await MessageService.create_message(msg, sender, room)
 
-        return room, msg
+        users = await RoomService.get_room_users(room.name)
+
+        return users, msg
