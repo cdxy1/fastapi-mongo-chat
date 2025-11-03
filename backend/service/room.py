@@ -6,6 +6,7 @@ from backend.repo.room import RoomRepo
 
 
 class RoomService:
+    @staticmethod
     async def create_p2p_room(sender: UserModel, recepient: UserModel) -> RoomModel:
         room_name = str(uuid4())
 
@@ -13,8 +14,10 @@ class RoomService:
 
         return room
 
+    @staticmethod
     async def create_group_room(): ...
 
+    @staticmethod
     async def get_room(name: str) -> RoomModel:
         room = await RoomRepo.get_by_name(name)
 

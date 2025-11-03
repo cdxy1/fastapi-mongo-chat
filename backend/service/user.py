@@ -3,7 +3,7 @@ from backend.repo.user import UserRepo
 
 
 class UserService:
-    async def get_current_user(name: str) -> UserModel:
+    async def get_user(name: str) -> UserModel:
         user = await UserRepo.find_by_name(name)
 
         return user

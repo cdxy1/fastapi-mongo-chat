@@ -6,8 +6,10 @@ from backend.models.user import UserModel
 class MessageRepo:
     @staticmethod
     async def create(content: str, sender: UserModel, room: RoomModel):
-        new_msg = MessageModel(content=content, sender=sender, room=room)
-        await new_msg.insert()
+        msg = MessageModel(content=content, sender=sender, room=room)
+        await msg.insert()
+
+        return msg
 
     @staticmethod
     async def find_by_room_id(room: str):

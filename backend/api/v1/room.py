@@ -17,14 +17,17 @@ async def websocket_endpoint(websocket: WebSocket, token: str):
 
     try:
         while True:
-            _ = await websocket.receive_text()
-            # msg_json = json.loads(msg)
-            # data = await UserDAO.find_all()
+            data = await websocket.receive_text()
 
-            # room = await RoomRepo.create("kek", data)
+            # sender = await UserRepo.find_by_name(token)
+            # receiver = await UserRepo.find_by_name(json.loads(data)["receiver"])
 
-            # await MessageRepo.create(msg_json["message"], data[0], room)
+            # room = await RoomService.create_p2p_room(sender, receiver)
 
-            await websocket_manager.broadcast("placeholder", token)
+            # _ = await MessageService.create_message(
+            #     json.loads(data)["message"], sender, room
+            # )
+
+            await websocket_manager.broadcast(data, token)
     except WebSocketDisconnect:
         websocket_manager.disconnect(token)
