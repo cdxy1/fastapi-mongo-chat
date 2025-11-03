@@ -8,3 +8,9 @@ class RoomRepo:
         room = await RoomModel(name=name, participants=participants).insert()
 
         return room
+
+    @staticmethod
+    async def get_by_name(name: str) -> UserModel:
+        room = await RoomModel.find_one({"name": name})
+
+        return room

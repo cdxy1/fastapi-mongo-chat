@@ -14,3 +14,8 @@ class RoomService:
         return room
 
     async def create_group_room(): ...
+
+    async def get_room(name: str) -> RoomModel:
+        room = await RoomRepo.get_by_name(name)
+
+        return room
