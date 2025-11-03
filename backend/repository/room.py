@@ -17,6 +17,8 @@ class RoomRepo:
 
     @staticmethod
     async def get_by_user(name: str) -> RoomModel:
-        rooms = RoomModel.find_many({"participants.username": name}, fetch_links=True)
+        rooms = RoomModel.find_many(
+            RoomModel.participants.username == name, fetch_links=True
+        )
 
         return await rooms.to_list()
