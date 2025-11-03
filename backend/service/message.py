@@ -1,6 +1,6 @@
 from backend.models.room import RoomModel
 from backend.models.user import UserModel
-from backend.repo.message import MessageRepo
+from backend.repository.message import MessageRepo
 
 
 class MessageService:

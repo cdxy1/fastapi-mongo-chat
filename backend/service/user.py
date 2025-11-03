@@ -1,5 +1,5 @@
 from backend.models.user import UserModel
-from backend.repo.user import UserRepo
+from backend.repository.user import UserRepo
 
 
 class UserService:

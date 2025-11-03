@@ -4,12 +4,6 @@ from backend.core.websocket_manager import websocket_manager
 
 router = APIRouter(prefix="/chat")
 
-# import json
-
-# from backend.dao.message import MessageRepo
-# from backend.dao.room import RoomRepo
-# from backend.dao.user_dao import UserDAO
-
 
 @router.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket, token: str):

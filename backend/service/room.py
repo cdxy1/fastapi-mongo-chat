@@ -2,7 +2,7 @@ from uuid import uuid4
 
 from backend.models.room import RoomModel
 from backend.models.user import UserModel
-from backend.repo.room import RoomRepo
+from backend.repository.room import RoomRepo
 
 
 class RoomService:
@@ -28,3 +28,9 @@ class RoomService:
         room = await RoomModel.find_one({"name": name}, fetch_links=True)
         room_users = room.participants
         return room_users
+
+    @staticmethod
+    async def is_room_exists(sender, reciver): ...
+
+    @staticmethod
+    async def get_p2p_room(sender, reciver): ...
