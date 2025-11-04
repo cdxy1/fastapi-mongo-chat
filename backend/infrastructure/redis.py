@@ -1,12 +1,11 @@
 from datetime import timedelta
 from typing import Optional
 
-from fastapi import HTTPException
 from redis import ConnectionError, Redis
 from redis import asyncio as aioredis
-from starlette import status
 
 from backend.core.config import REDIS
+from backend.core.exceptions import RedisConnectionException
 
 
 class RedisClient:
@@ -25,28 +24,19 @@ class RedisClient:
         try:
             await self.redis.setex(f"refresh:{key}", expire, value)
         except ConnectionError:
-            raise HTTPException(
-                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-                detail="Redis is not available.",
-            )
+            raise RedisConnectionException
 
     async def get_value(self, key) -> Optional[str]:
         try:
             return await self.redis.get(f"refresh:{key}")
         except ConnectionError:
-            raise HTTPException(
-                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-                detail="Redis is not available.",
-            )
+            raise RedisConnectionException
 
     async def delete_value(self, key) -> None:
         try:
             await self.redis.delete(f"refresh:{key}")
         except ConnectionError:
-            raise HTTPException(
-                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-                detail="Redis is not available.",
-            )
+            raise RedisConnectionException
 
 
 redis_client = RedisClient()

@@ -10,3 +10,18 @@ class HTTPDuplicateException(HTTPException):
 class HTTPUnauthorizedException(HTTPException):
     def __init__(self):
         super().__init__(status.HTTP_401_UNAUTHORIZED, "Unauthorized", None)
+
+
+class TokenInvalidException(Exception):
+    def __init__(self, *args):
+        super().__init__(*args)
+
+
+class TokenDecodeException(Exception):
+    def __init__(self, *args):
+        super().__init__(*args)
+
+
+class RedisConnectionException(Exception):
+    def __init__(self, *args):
+        super().__init__(*args)

@@ -1,10 +1,11 @@
 from datetime import datetime, timedelta
 from typing import Annotated
 
-from fastapi import Depends, HTTPException
+from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 from jwt import DecodeError, ExpiredSignatureError
 
+from backend.core.exceptions import TokenDecodeException, TokenInvalidException
 from backend.core.security import decode_token, generate_refresh_token
 from backend.infrastructure.redis import redis_client
 
@@ -40,11 +41,11 @@ def decode_access_token(token: Annotated[str, Depends(oauth2_schema)]) -> dict:
         exp = payload.get("exp")
 
         if not exp or datetime.now() >= datetime.utcfromtimestamp(exp):
-            raise HTTPException(status_code=401, detail="Token expired or invalid")
+            raise TokenInvalidException
         return payload
 
     except DecodeError:
-        raise HTTPException(status_code=401, detail="Token decode error")
+        raise TokenDecodeException
 
 
 def user_id_from_token(token: Annotated[str, Depends(oauth2_schema)]) -> dict:
@@ -55,6 +56,6 @@ def user_id_from_token(token: Annotated[str, Depends(oauth2_schema)]) -> dict:
         return user
 
     except DecodeError:
-        raise HTTPException(status_code=401, detail="Token decode error")
+        raise TokenDecodeException
     except ExpiredSignatureError:
-        raise HTTPException(status_code=401, detail="Signature has expired")
+        raise TokenInvalidException
