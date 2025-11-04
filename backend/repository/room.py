@@ -1,3 +1,5 @@
+from beanie.operators import In
+
 from backend.models.room import RoomModel
 from backend.models.user import UserModel
 
@@ -10,15 +12,23 @@ class RoomRepo:
         return room
 
     @staticmethod
-    async def get_by_name(name: str) -> RoomModel:
+    async def find_by_name(name: str) -> RoomModel:
         room = await RoomModel.find_one({"name": name})
 
         return room
 
     @staticmethod
-    async def get_by_user(name: str) -> RoomModel:
+    async def find_with_participant(name: str) -> RoomModel:
         rooms = RoomModel.find_many(
             RoomModel.participants.username == name, fetch_links=True
+        )
+
+        return await rooms.to_list()
+
+    @staticmethod
+    async def find_with_participants(names: list[str]) -> RoomModel:
+        rooms = RoomModel.find_many(
+            In(RoomModel.participants.username, names), fetch_links=True
         )
 
         return await rooms.to_list()

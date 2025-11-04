@@ -1,6 +1,9 @@
+import json
+
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
 from backend.core.websocket_manager import websocket_manager
+from backend.usecase.send_direct_message_usecase import SendDirectMessageUsecase
 
 router = APIRouter(prefix="/chat")
 
@@ -12,16 +15,15 @@ async def websocket_endpoint(websocket: WebSocket, token: str):
     try:
         while True:
             data = await websocket.receive_text()
+            deserlized_data = json.loads(data)
+            usecase = SendDirectMessageUsecase()
+            users = await usecase(
+                token, deserlized_data["receiver"], deserlized_data["message"]
+            )
 
-            # sender = await UserRepo.find_by_name(token)
-            # receiver = await UserRepo.find_by_name(json.loads(data)["receiver"])
-
-            # room = await RoomService.create_p2p_room(sender, receiver)
-
-            # _ = await MessageService.create_message(
-            #     json.loads(data)["message"], sender, room
-            # )
-
-            await websocket_manager.broadcast(data, token)
+            for user in users:
+                await websocket_manager.broadcast(
+                    deserlized_data["message"], user.username
+                )
     except WebSocketDisconnect:
         websocket_manager.disconnect(token)

@@ -7,10 +7,10 @@ from backend.repository.room import RoomRepo
 
 class RoomService:
     @staticmethod
-    async def create_p2p_room(sender: UserModel, recipient: UserModel) -> RoomModel:
+    async def create_p2p_room(recipients: list[str]) -> RoomModel:
         room_name = str(uuid4())
 
-        room = await RoomRepo.create(room_name, [sender, recipient])
+        room = await RoomRepo.create(room_name, recipients)
 
         return room
 
@@ -30,7 +30,14 @@ class RoomService:
         return room_users
 
     @staticmethod
-    async def is_room_exists(sender, reciver): ...
+    async def get_or_create_p2p_room(sender, reciver) -> RoomModel:
+        rooms = await RoomRepo.find_with_participants(
+            [reciver.username, sender.username]
+        )
+        for room in rooms:
+            if len(room.participants) == 2:
+                return room
 
-    @staticmethod
-    async def get_p2p_room(sender, reciver): ...
+        room = await RoomService.create_p2p_room([sender, reciver])
+
+        return room
