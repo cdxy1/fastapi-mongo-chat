@@ -1,11 +1,12 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, status
-from fastapi.exceptions import HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from pymongo.errors import DuplicateKeyError
 
+from backend.core.exceptions import HTTPDuplicateException, HTTPUnauthorizedException
+from backend.core.security import verify_password
 from backend.infrastructure.redis import redis_client
 from backend.repository.user import UserRepository
 from backend.schema.response import (
@@ -19,7 +20,6 @@ from backend.utils.auth import (
     create_refresh_token,
     decode_access_token,
     user_id_from_token,
-    verify_password,
 )
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
@@ -36,19 +36,13 @@ async def register(
             status_code=status.HTTP_201_CREATED, content=response.model_dump()
         )
     except DuplicateKeyError:
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT, detail="Duplicate error"
-        )
+        raise HTTPDuplicateException()
 
 
 @router.post("/login")
 async def login(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ) -> JSONResponse:
-    credentials_exc = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized"
-    )
-
     user = await UserRepository.find_by_name(username=form_data.username)
     if user and verify_password(form_data.password, user.password):
         token = create_access_token({"sub": str(user.id)})
@@ -63,21 +57,19 @@ async def login(
             status_code=status.HTTP_200_OK, content=response.model_dump()
         )
     else:
-        raise credentials_exc
+        raise HTTPUnauthorizedException()
 
 
 @router.post("/refresh")
 async def refresh_access_token(
     current_user: Annotated[str, Depends(user_id_from_token)],
 ):
-    exc = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized")
-
     if not current_user:
-        raise exc
+        raise HTTPUnauthorizedException()
 
     refresh_token = await redis_client.get_value(current_user)
     if not refresh_token:
-        raise exc
+        raise HTTPUnauthorizedException()
 
     payload = {"sub": current_user}
 
