@@ -18,4 +18,6 @@ class SendDirectMessageUsecase:
 
         users = await RoomService.get_room_users(room.name)
 
-        return users
+        recicipients = tuple(filter(lambda recicipient: recicipient != sender, users))
+
+        return recicipients

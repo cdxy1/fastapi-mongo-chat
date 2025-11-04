@@ -1,41 +1,64 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Chat</title>
-    </head>
-    <body>
-        <h1>WebSocket Chat</h1>
-        <form action="" onsubmit="sendMessage(event)">
-            <input type="text" id="messageText" autocomplete="off"/>
-            <button>Send</button>
-        </form>
-        <ul id='messages'>
-        </ul>
-        <script>
-            var randToken = Math.floor(Math.random() * 1_000_000);
-            var ws = new WebSocket(`ws://localhost:8000/api/v1/chat/ws?token=jojo1`);
-            ws.onmessage = function(event) {
-                var messages = document.getElementById('messages')
-                var message = document.createElement('li')
-                var content = document.createTextNode(event.data)
-                message.appendChild(content)
-                messages.appendChild(message)
-            };
-            function sendMessage(event) {
-                var input = document.getElementById("messageText")
+<head>
+    <title>WebSocket Chat</title>
+</head>
+<body>
 
-                let msg = {
-                    "message": input.value,
-                    "receiver": "jojo3",
-                    "type": "placeholder",
-                }
+<h1>Users</h1>
 
-                let data = JSON.stringify(msg)
+<div>
+    <input type="text" id="from_user" placeholder="Sender"/>
+    <input type="text" id="to_user" placeholder="Receiver"/>
+    <button id="connect">Connect</button>
+</div>
 
-                ws.send(data)
-                input.value = ''
-                event.preventDefault()
-            }
-        </script>
-    </body>
+<h1>WebSocket Chat</h1>
+
+<form onsubmit="sendMessage(event)">
+    <input type="text" id="messageText" autocomplete="off" placeholder="Message"/>
+    <button>Send</button>
+</form>
+
+<ul id="messages"></ul>
+
+<script>
+    let ws = null;
+
+    document.getElementById('connect').onclick = function () {
+        const fromUser = document.getElementById('from_user').value.trim();
+        const toUser = document.getElementById('to_user').value.trim();
+
+        const query = new URLSearchParams({
+            token: fromUser,
+        }).toString();
+
+        ws = new WebSocket(`ws://localhost:8000/api/v1/chat/ws?${query}`);
+
+        ws.onmessage = function (event) {
+            const li = document.createElement('li');
+            li.textContent = event.data;
+            document.getElementById('messages').appendChild(li);
+        };
+    };
+
+    function sendMessage(event) {
+        event.preventDefault();
+        if (!ws) return;
+
+        const text = document.getElementById("messageText").value.trim();
+        const receiver = document.getElementById('to_user').value.trim();
+
+        const msg = {
+            message: text,
+            receiver: receiver,
+            type: "placeholder"
+        };
+
+        ws.send(JSON.stringify(msg));
+        document.getElementById("messageText").value = "";
+    }
+</script>
+
+</body>
 </html>
