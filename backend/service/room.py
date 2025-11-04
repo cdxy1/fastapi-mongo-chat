@@ -34,10 +34,10 @@ class RoomService:
         rooms = await RoomRepo.find_with_participants(
             [reciver.username, sender.username]
         )
+
         for room in rooms:
             if len(room.participants) == 2:
                 return room
 
         room = await RoomService.create_p2p_room([sender, reciver])
-
         return room

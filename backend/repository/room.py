@@ -1,4 +1,4 @@
-from beanie.operators import In
+from beanie.operators import All
 
 from backend.models.room import RoomModel
 from backend.models.user import UserModel
@@ -28,7 +28,7 @@ class RoomRepo:
     @staticmethod
     async def find_with_participants(names: list[str]) -> RoomModel:
         rooms = RoomModel.find_many(
-            In(RoomModel.participants.username, names), fetch_links=True
+            All(RoomModel.participants.username, names), fetch_links=True
         )
 
         return await rooms.to_list()
