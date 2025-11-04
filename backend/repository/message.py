@@ -3,7 +3,7 @@ from backend.models.room import RoomModel
 from backend.models.user import UserModel
 
 
-class MessageRepo:
+class MessageRepository:
     @staticmethod
     async def create(content: str, sender: UserModel, room: RoomModel):
         msg = MessageModel(content=content, sender=sender, room=room)

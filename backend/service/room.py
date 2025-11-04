@@ -2,7 +2,7 @@ from uuid import uuid4
 
 from backend.models.room import RoomModel
 from backend.models.user import UserModel
-from backend.repository.room import RoomRepo
+from backend.repository.room import RoomRepository
 
 
 class RoomService:
@@ -10,7 +10,7 @@ class RoomService:
     async def create_p2p_room(recipients: list[str]) -> RoomModel:
         room_name = str(uuid4())
 
-        room = await RoomRepo.create(room_name, recipients)
+        room = await RoomRepository.create(room_name, recipients)
 
         return room
 
@@ -19,7 +19,7 @@ class RoomService:
 
     @staticmethod
     async def get_room(name: str) -> RoomModel:
-        room = await RoomRepo.get_by_name(name)
+        room = await RoomRepository.get_by_name(name)
 
         return room
 
@@ -31,7 +31,7 @@ class RoomService:
 
     @staticmethod
     async def get_or_create_p2p_room(sender, reciver) -> RoomModel:
-        rooms = await RoomRepo.find_with_participants(
+        rooms = await RoomRepository.find_with_participants(
             [reciver.username, sender.username]
         )
 

@@ -4,7 +4,7 @@ from backend.models.room import RoomModel
 from backend.models.user import UserModel
 
 
-class RoomRepo:
+class RoomRepository:
     @staticmethod
     async def create(name: str, participants: list[UserModel]) -> RoomModel:
         room = await RoomModel(name=name, participants=participants).insert()
