@@ -6,8 +6,8 @@ from fastapi.security import OAuth2PasswordBearer
 from jwt import DecodeError, ExpiredSignatureError
 
 from backend.core.exceptions import TokenDecodeException, TokenInvalidException
-from backend.core.security import decode_token, generate_refresh_token
 from backend.infrastructure.redis import redis_client
+from backend.utils.security import decode_token, generate_refresh_token
 
 oauth2_schema = OAuth2PasswordBearer("/api/v1/auth/login")
 

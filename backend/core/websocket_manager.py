@@ -16,11 +16,6 @@ class ConnectionManager:
 
     async def broadcast(self, message: dict, user: str):
         if conn := self.active_connections.get(user):
-            # message_with_class = {
-            #     "time": str(datetime.now()),
-            #     "user": user,
-            #     "text": message,
-            # }
             await conn.send_json(message)
 
 

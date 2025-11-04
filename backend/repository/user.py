@@ -1,6 +1,6 @@
-from backend.core.security import hash_password
 from backend.models.user import UserModel
 from backend.schema.user import UserSchema
+from backend.utils.security import hash_password
 
 
 class UserRepository:

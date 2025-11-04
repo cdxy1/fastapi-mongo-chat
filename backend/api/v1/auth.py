@@ -5,8 +5,13 @@ from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from pymongo.errors import DuplicateKeyError
 
+from backend.core.auth import (
+    create_access_token,
+    create_refresh_token,
+    decode_access_token,
+    user_id_from_token,
+)
 from backend.core.exceptions import HTTPDuplicateException, HTTPUnauthorizedException
-from backend.core.security import verify_password
 from backend.infrastructure.redis import redis_client
 from backend.repository.user import UserRepository
 from backend.schema.response import (
@@ -15,12 +20,7 @@ from backend.schema.response import (
     ResponseSchema,
 )
 from backend.schema.user import UserSchema
-from backend.utils.auth import (
-    create_access_token,
-    create_refresh_token,
-    decode_access_token,
-    user_id_from_token,
-)
+from backend.utils.security import verify_password
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
