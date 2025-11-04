@@ -1,25 +1,14 @@
 from datetime import datetime, timedelta
 from typing import Annotated
 
-import jwt
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from jwt import DecodeError, ExpiredSignatureError
-from passlib.context import CryptContext
 
-from backend.core.config import SECURITY
+from backend.core.security import decode_token, generate_refresh_token
 from backend.infrastructure.redis import redis_client
 
-pwd_context = CryptContext(["bcrypt"])
 oauth2_schema = OAuth2PasswordBearer("/api/v1/auth/login")
-
-
-def hash_password(password: str):
-    return pwd_context.hash(password)
-
-
-def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
 
 
 def create_access_token(
@@ -28,7 +17,9 @@ def create_access_token(
     to_encode = data.copy()
     expire = datetime.now() + timedelta(minutes=30)
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECURITY.SECRET_KEY, SECURITY.ALGORITHM)
+
+    encoded_jwt = generate_refresh_token(to_encode)
+
     return encoded_jwt
 
 
@@ -36,18 +27,16 @@ async def create_refresh_token(
     username: str,
 ) -> str:
     expire = timedelta(days=30)
-    encoded_jwt = jwt.encode(
-        {"sub": username},
-        SECURITY.SECRET_KEY,
-        SECURITY.ALGORITHM,
-    )
+    encoded_jwt = generate_refresh_token({"sub": username})
+
     await redis_client.set_value(username, encoded_jwt, expire)
+
     return encoded_jwt
 
 
 def decode_access_token(token: Annotated[str, Depends(oauth2_schema)]) -> dict:
     try:
-        payload = jwt.decode(token, SECURITY.SECRET_KEY, SECURITY.ALGORITHM)
+        payload = decode_token(token)
         exp = payload.get("exp")
 
         if not exp or datetime.now() >= datetime.utcfromtimestamp(exp):
@@ -60,7 +49,7 @@ def decode_access_token(token: Annotated[str, Depends(oauth2_schema)]) -> dict:
 
 def user_id_from_token(token: Annotated[str, Depends(oauth2_schema)]) -> dict:
     try:
-        payload = jwt.decode(token, SECURITY.SECRET_KEY, SECURITY.ALGORITHM)
+        payload = decode_token(token)
         user = payload.get("sub")
 
         return user
