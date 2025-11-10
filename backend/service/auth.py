@@ -1,98 +1,69 @@
-from typing import Annotated
-
-from fastapi import Depends, status
-from fastapi.exceptions import HTTPException
-from fastapi.responses import JSONResponse
-from fastapi.security import OAuth2PasswordRequestForm
 from pymongo.errors import DuplicateKeyError
 
 from backend.core.auth import (
     create_access_token,
     create_refresh_token,
-    decode_access_token,
-    user_id_from_token,
 )
-from backend.infrastructure.redis import redis_client
+from backend.core.exceptions import (
+    InvalidCredentialsException,
+    RefreshTokenNotFoundException,
+    UserAlreadyExistsException,
+)
+from backend.infrastructure.redis import REDIS_CLIENT
+from backend.model.user import UserModel
 from backend.repository.user import UserRepository
-from backend.schema.response import (
-    AccessTokenResponseSchema,
-    AuthResponseSchema,
-    ResponseSchema,
-)
 from backend.schema.user import UserSchema
-from backend.utils.security import verify_password
+from backend.utils.security import hash_password, verify_password
 
 
 class AuthService:
     @staticmethod
-    async def create_user(
-        user: UserSchema,
-    ):
+    async def register(user: UserSchema) -> UserModel:
         try:
-            await UserRepository.create(user)
-            response = ResponseSchema(detail="Success")
-            return JSONResponse(
-                status_code=status.HTTP_201_CREATED, content=response.model_dump()
-            )
+            # Hash password before storing
+            user_dict = user.model_dump()
+            user_dict["password"] = hash_password(user_dict["password"])
+            user_with_hashed_password = UserSchema(**user_dict)
+
+            created_user = await UserRepository.create(user_with_hashed_password)
+            return created_user
         except DuplicateKeyError:
-            raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT, detail="Duplicate error"
-            )
+            raise UserAlreadyExistsException()
 
     @staticmethod
-    async def login(
-        form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-    ) -> JSONResponse:
-        credentials_exc = HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized"
-        )
+    async def login(username: str, password: str) -> dict[str, str]:
+        user = await UserRepository.find_by_name(username=username)
 
-        user = await UserRepository.find_by_name(username=form_data.username)
-        if user and verify_password(form_data.password, user.password):
-            token = create_access_token({"sub": str(user.id)})
-            refresh_token = await create_refresh_token(str(user.id))
-            response = AuthResponseSchema(
-                detail="Success",
-                access_token=token,
-                refresh_token=refresh_token,
-                token_type="bearer",
-            )
-            return JSONResponse(
-                status_code=status.HTTP_200_OK, content=response.model_dump()
-            )
-        else:
-            raise credentials_exc
+        if not user:
+            raise InvalidCredentialsException()
+
+        if not verify_password(password, user.password):
+            raise InvalidCredentialsException()
+
+        token = create_access_token({"sub": str(user.id)})
+        refresh_token = await create_refresh_token(str(user.id))
+
+        return {
+            "access_token": token,
+            "refresh_token": refresh_token,
+        }
 
     @staticmethod
-    async def refresh_access_token(
-        current_user: Annotated[str, Depends(user_id_from_token)],
-    ):
-        exc = HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized"
-        )
+    async def refresh_token(user_id: str) -> dict[str, str]:
+        refresh_token = await REDIS_CLIENT.get_value(user_id)
 
-        if not current_user:
-            raise exc
-
-        refresh_token = await redis_client.get_value(current_user)
         if not refresh_token:
-            raise exc
+            raise RefreshTokenNotFoundException()
 
-        payload = {"sub": current_user}
+        payload = {"sub": user_id}
+        access_token = create_access_token(payload)
+        new_refresh_token = await create_refresh_token(user_id)
 
-        token = create_access_token(payload)
-        response = AccessTokenResponseSchema(detail="Success", access_token=token)
-        return JSONResponse(
-            status_code=status.HTTP_200_OK, content=response.model_dump()
-        )
+        return {
+            "access_token": access_token,
+            "refresh_token": new_refresh_token,
+        }
 
     @staticmethod
-    async def logout(
-        current_user: Annotated[dict, Depends(decode_access_token)],
-    ) -> JSONResponse:
-        user_id = current_user.get("sub")
-        await redis_client.delete_value(user_id)
-        response = ResponseSchema(detail="Success")
-        return JSONResponse(
-            status_code=status.HTTP_200_OK, content=response.model_dump()
-        )
+    async def logout(user_id: str) -> None:
+        await REDIS_CLIENT.delete_value(user_id)

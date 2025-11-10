@@ -10,5 +10,4 @@ class AccessTokenResponseSchema(ResponseSchema):
 
 
 class AuthResponseSchema(AccessTokenResponseSchema):
-    refresh_token: str
     token_type: str

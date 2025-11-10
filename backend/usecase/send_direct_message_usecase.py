@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from backend.models.user import UserModel
+from backend.model.user import UserModel
 from backend.service.message import MessageService
 from backend.service.room import RoomService
 from backend.service.user import UserService

@@ -6,7 +6,7 @@ from fastapi.security import OAuth2PasswordBearer
 from jwt import DecodeError, ExpiredSignatureError
 
 from backend.core.exceptions import TokenDecodeException, TokenInvalidException
-from backend.infrastructure.redis import redis_client
+from backend.infrastructure.redis import REDIS_CLIENT
 from backend.utils.security import decode_token, generate_refresh_token
 
 oauth2_schema = OAuth2PasswordBearer("/api/v1/auth/login")
@@ -30,7 +30,7 @@ async def create_refresh_token(
     expire = timedelta(days=30)
     encoded_jwt = generate_refresh_token({"sub": username})
 
-    await redis_client.set_value(username, encoded_jwt, expire)
+    await REDIS_CLIENT.set_value(username, encoded_jwt, expire)
 
     return encoded_jwt
 

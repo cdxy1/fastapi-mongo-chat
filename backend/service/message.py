@@ -1,5 +1,5 @@
-from backend.models.room import RoomModel
-from backend.models.user import UserModel
+from backend.model.room import RoomModel
+from backend.model.user import UserModel
 from backend.repository.message import MessageRepository
 
 

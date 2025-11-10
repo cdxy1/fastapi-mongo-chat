@@ -39,4 +39,4 @@ class RedisClient:
             raise RedisConnectionException
 
 
-redis_client = RedisClient()
+REDIS_CLIENT = RedisClient()

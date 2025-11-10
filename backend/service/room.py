@@ -1,7 +1,7 @@
 from uuid import uuid4
 
-from backend.models.room import RoomModel
-from backend.models.user import UserModel
+from backend.model.room import RoomModel
+from backend.model.user import UserModel
 from backend.repository.room import RoomRepository
 
 

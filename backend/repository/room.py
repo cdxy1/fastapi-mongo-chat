@@ -1,7 +1,7 @@
 from beanie.operators import All
 
-from backend.models.room import RoomModel
-from backend.models.user import UserModel
+from backend.model.room import RoomModel
+from backend.model.user import UserModel
 
 
 class RoomRepository:

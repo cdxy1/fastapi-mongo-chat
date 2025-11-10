@@ -1,4 +1,4 @@
-from backend.models.user import UserModel
+from backend.model.user import UserModel
 from backend.repository.user import UserRepository
 
 

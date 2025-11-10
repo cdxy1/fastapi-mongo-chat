@@ -2,7 +2,7 @@ from enum import Enum
 
 from beanie import Document, Link
 
-from backend.models.user import UserModel
+from backend.model.user import UserModel
 
 
 class RoomTypeEnum(Enum):

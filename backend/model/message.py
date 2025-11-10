@@ -2,8 +2,8 @@ from datetime import datetime
 
 from beanie import Document, Link
 
-from backend.models.room import RoomModel
-from backend.models.user import UserModel
+from backend.model.room import RoomModel
+from backend.model.user import UserModel
 
 
 class MessageModel(Document):

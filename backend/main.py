@@ -5,16 +5,16 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from backend.api.router import router as api_router
 from backend.infrastructure.database import MongoDB
-from backend.infrastructure.redis import redis_client
+from backend.infrastructure.redis import REDIS_CLIENT
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    await redis_client.connect()
+    await REDIS_CLIENT.connect()
     await MongoDB().init_db()
     yield
     MongoDB.close()
-    await redis_client.close()
+    await REDIS_CLIENT.close()
 
 
 app = FastAPI(lifespan=lifespan)

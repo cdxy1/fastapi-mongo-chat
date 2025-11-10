@@ -1,12 +1,11 @@
-from backend.models.user import UserModel
+from backend.model.user import UserModel
 from backend.schema.user import UserSchema
-from backend.utils.security import hash_password
 
 
 class UserRepository:
     @staticmethod
     async def create(user: UserSchema) -> UserModel:
-        user.password = hash_password(user.password)
+        # user.password = hash_password(user.password)
         new_user = UserModel(**user.model_dump())
         await new_user.insert()
         return new_user
