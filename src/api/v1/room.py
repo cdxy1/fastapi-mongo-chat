@@ -5,6 +5,7 @@ from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from src.core.websocket_manager import websocket_manager
 from src.service.user import UserService
 from src.usecase.send_direct_message_usecase import SendDirectMessageUsecase
+from src.utils.security import decode_token
 
 router = APIRouter(prefix="/chat", tags=["Chat"])
 
@@ -12,8 +13,6 @@ router = APIRouter(prefix="/chat", tags=["Chat"])
 @router.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket, token: str):
     try:
-        from src.utils.security import decode_token
-
         payload = decode_token(token)
         user_id = payload.get("sub")
         user = await UserService.get_user_by_id(user_id)
