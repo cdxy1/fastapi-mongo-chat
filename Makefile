@@ -1,7 +1,7 @@
 .PHONY: up, down, up-dev, down-dev, run, fmt
 
 run:
-	uvicorn src.main:app --reload
+	uvicorn src.main:app --port 8080 --reload
 
 up:
 	docker compose -f ./compose-local.yml -p local up -d

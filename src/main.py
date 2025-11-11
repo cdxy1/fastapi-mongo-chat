@@ -17,7 +17,7 @@ async def lifespan(app: FastAPI):
     await REDIS_CLIENT.close()
 
 
-app = FastAPI(lifespan=lifespan)
+app = FastAPI(lifespan=lifespan, title="Websocket Chat")
 
 app.add_middleware(
     CORSMiddleware,
