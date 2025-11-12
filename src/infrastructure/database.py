@@ -9,11 +9,12 @@ from src.model.user import UserModel
 
 class MongoDB:
     _CLIENT = AsyncIOMotorClient(MONGO_DB.DATABASE_URL)
+    _DB = _CLIENT[MONGO_DB.DATABASE_NAME]
 
     @classmethod
     async def init_db(cls):
         await init_beanie(
-            database=cls._CLIENT.db_name,
+            database=cls._DB,
             document_models=[UserModel, RoomModel, MessageModel],
         )
 

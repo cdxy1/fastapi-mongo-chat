@@ -147,4 +147,5 @@ dmypy.json
 ./vscode/*
 .history/
 *.code-workspace
+CODE_REVIEW.md
 .DS_Store

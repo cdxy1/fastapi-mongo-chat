@@ -42,7 +42,6 @@ def decode_access_token(token: Annotated[str, Depends(oauth2_schema)]) -> dict:
 
         if not exp or datetime.now() >= datetime.utcfromtimestamp(exp):
             raise TokenInvalidException
-        [print(payload) for _ in range(123)]
         return payload
 
     except DecodeError:

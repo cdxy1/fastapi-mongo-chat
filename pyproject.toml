@@ -1,7 +1,7 @@
 [project]
-name = "hope-i-will-finish-thos"
+name = "fastapi-mongo-chat"
 version = "0.1.0"
-description = "Add your description here"
+description = "A real-time messaging application built with FastAPI, MongoDB, and Redis. Features user authentication, direct messaging via WebSocket, and RESTful API for user management."
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
