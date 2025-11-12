@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from src.api.router import router as api_router
 from src.infrastructure.database import MongoDB
 from src.infrastructure.redis import REDIS_CLIENT
+from src.utils.mapper import to_http_error
 
 
 @asynccontextmanager
@@ -26,5 +27,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.exception_handler(Exception)
+async def glolbal_exception_handler(request, exc):
+    to_http_error(exc)
+
 
 app.include_router(api_router)

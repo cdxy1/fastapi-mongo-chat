@@ -31,6 +31,9 @@ class UserNotFoundException(HTTPException):
     def __init__(self, message: str = "User not found"):
         super().__init__(status.HTTP_404_NOT_FOUND, message, None)
 
+    def to_dict(self):
+        return {"content": self.detail, "status_code": self.status_code}
+
 
 class InvalidCredentialsException(HTTPException):
     def __init__(self, message: str = "Invalid username or password"):
@@ -48,5 +51,13 @@ class UserAlreadyExistsException(HTTPException):
 
 
 class RoomNotFoundException(HTTPException):
-    def __init__(self, message: str = "Room not found"):
-        super().__init__(status.HTTP_404_NOT_FOUND, message, None)
+    def __init__(self):
+        super().__init__(status.HTTP_404_NOT_FOUND, "Room not found", None)
+
+
+class UnauthorizedException(HTTPException):
+    def __init__(self):
+        super().__init__(status.HTTP_401_UNAUTHORIZED, "unauthorized", None)
+
+
+class InvalidUserIdException(Exception): ...

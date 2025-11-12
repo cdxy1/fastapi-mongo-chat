@@ -1,5 +1,6 @@
 from beanie import PydanticObjectId
 
+from src.core.exceptions import InvalidUserIdException
 from src.model.user import UserModel
 from src.schema.user import UserSchema
 
@@ -18,6 +19,9 @@ class UserRepository:
 
     @staticmethod
     async def find_by_id(user_id: str) -> UserModel:
+        if not PydanticObjectId.is_valid(user_id):
+            raise InvalidUserIdException
+
         user = await UserModel.get(PydanticObjectId(user_id))
         return user
 
