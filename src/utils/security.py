@@ -8,7 +8,7 @@ from src.core.config import SECURITY
 pwd_context = CryptContext(["bcrypt"])
 
 
-def generate_refresh_token(data: str) -> str:
+def generate_refresh_token(data: dict) -> str:
     encoded_jwt = jwt.encode(
         data,
         SECURITY.SECRET_KEY,

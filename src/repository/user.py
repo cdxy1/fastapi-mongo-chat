@@ -1,3 +1,5 @@
+from beanie import PydanticObjectId
+
 from src.model.user import UserModel
 from src.schema.user import UserSchema
 
@@ -16,7 +18,7 @@ class UserRepository:
 
     @staticmethod
     async def find_by_id(user_id: str) -> UserModel:
-        user = await UserModel.get(user_id)
+        user = await UserModel.get(PydanticObjectId(user_id))
         return user
 
     @staticmethod

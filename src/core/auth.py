@@ -16,7 +16,7 @@ def create_access_token(
     data: dict,
 ) -> str:
     to_encode = data.copy()
-    expire = datetime.now() + timedelta(minutes=30)
+    expire = datetime.utcnow() + timedelta(minutes=30)
     to_encode.update({"exp": expire})
 
     encoded_jwt = generate_refresh_token(to_encode)
@@ -40,7 +40,7 @@ def decode_access_token(token: Annotated[str, Depends(oauth2_schema)]) -> dict:
         payload = decode_token(token)
         exp = payload.get("exp")
 
-        if not exp or datetime.now() >= datetime.utcfromtimestamp(exp):
+        if not exp or datetime.utcnow() >= datetime.utcfromtimestamp(exp):
             raise TokenInvalidException
         return payload
 
